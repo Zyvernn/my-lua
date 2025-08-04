@@ -1,126 +1,139 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- UI Setup
-local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-screenGui.Name = "FreezeTradeUI"
+-- 🖼️ UI Setup
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "MiniFreezeTradeUI"
+gui.ResetOnSpawn = false
 
-local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 300, 0, 400)
-mainFrame.Position = UDim2.new(0.5, -150, 0.5, -200)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-mainFrame.BorderSizePixel = 0
-mainFrame.ClipsDescendants = true
-mainFrame.BackgroundTransparency = 0
-Instance.new("UICorner", mainFrame)
+-- 🎯 Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 240, 0, 280)
+frame.Position = UDim2.new(1, -250, 1, -290)
+frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+frame.Parent = gui
+Instance.new("UICorner", frame)
 
--- Title
-local title = Instance.new("TextLabel", mainFrame)
-title.Text = "🔒 Trade Freeze"
+-- 🏷️ Title
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.Text = "🔒 Freeze Trade"
 title.Font = Enum.Font.SourceSansBold
-title.TextSize = 24
-title.Size = UDim2.new(1, 0, 0, 50)
-title.BackgroundTransparency = 1
+title.TextSize = 20
 title.TextColor3 = Color3.fromRGB(0, 0, 0)
+title.BackgroundTransparency = 1
 
--- Player List Label
-local selectLabel = Instance.new("TextLabel", mainFrame)
-selectLabel.Text = "Select Player:"
-selectLabel.Font = Enum.Font.SourceSans
-selectLabel.TextSize = 18
-selectLabel.Position = UDim2.new(0, 10, 0, 50)
-selectLabel.Size = UDim2.new(1, -20, 0, 30)
-selectLabel.BackgroundTransparency = 1
-selectLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+-- 🔁 Refresh Button
+local refreshButton = Instance.new("TextButton", frame)
+refreshButton.Size = UDim2.new(0, 80, 0, 25)
+refreshButton.Position = UDim2.new(1, -90, 0, 35)
+refreshButton.Text = "🔁 Refresh"
+refreshButton.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+refreshButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+refreshButton.Font = Enum.Font.SourceSans
+refreshButton.TextSize = 16
+Instance.new("UICorner", refreshButton)
 
--- Scrolling Player List
-local playerList = Instance.new("ScrollingFrame", mainFrame)
-playerList.Position = UDim2.new(0, 10, 0, 85)
-playerList.Size = UDim2.new(1, -20, 0, 120)
-playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-playerList.ScrollBarThickness = 6
-playerList.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
-playerList.BorderSizePixel = 0
+-- 📜 Player List Label
+local playerListLabel = Instance.new("TextLabel", frame)
+playerListLabel.Text = "Select Player:"
+playerListLabel.Position = UDim2.new(0, 10, 0, 35)
+playerListLabel.Size = UDim2.new(0.5, 0, 0, 25)
+playerListLabel.Font = Enum.Font.SourceSans
+playerListLabel.TextSize = 16
+playerListLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+playerListLabel.BackgroundTransparency = 1
 
-local listLayout = Instance.new("UIListLayout", playerList)
-listLayout.Padding = UDim.new(0, 5)
+-- 👤 Player List Frame
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 65)
+scroll.Size = UDim2.new(1, -20, 0, 100)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 5
+scroll.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+scroll.BorderSizePixel = 0
+Instance.new("UICorner", scroll)
+
+local listLayout = Instance.new("UIListLayout", scroll)
 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+listLayout.Padding = UDim.new(0, 5)
 
--- Freeze Button
-local freezeButton = Instance.new("TextButton", mainFrame)
+-- ❄️ Freeze Button
+local freezeButton = Instance.new("TextButton", frame)
+freezeButton.Size = UDim2.new(1, -20, 0, 40)
+freezeButton.Position = UDim2.new(0, 10, 0, 175)
 freezeButton.Text = "❄️ Freeze Trade"
 freezeButton.Font = Enum.Font.SourceSansBold
-freezeButton.TextSize = 20
-freezeButton.Size = UDim2.new(1, -20, 0, 40)
-freezeButton.Position = UDim2.new(0, 10, 0, 215)
+freezeButton.TextSize = 18
 freezeButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 freezeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 Instance.new("UICorner", freezeButton)
 
--- Loading Bar Background
-local loadingBack = Instance.new("Frame", mainFrame)
-loadingBack.Size = UDim2.new(1, -20, 0, 20)
-loadingBack.Position = UDim2.new(0, 10, 0, 265)
+-- 🔵 Loading Bar Background
+local loadingBack = Instance.new("Frame", frame)
+loadingBack.Size = UDim2.new(1, -20, 0, 15)
+loadingBack.Position = UDim2.new(0, 10, 0, 225)
 loadingBack.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 Instance.new("UICorner", loadingBack)
 
--- Loading Bar Fill
+-- 🔵 Loading Fill
 local loadingFill = Instance.new("Frame", loadingBack)
 loadingFill.Size = UDim2.new(0, 0, 1, 0)
 loadingFill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
 loadingFill.BorderSizePixel = 0
 Instance.new("UICorner", loadingFill)
 
--- Status Label
-local statusLabel = Instance.new("TextLabel", mainFrame)
-statusLabel.Text = ""
+-- ✅ Status Label
+local statusLabel = Instance.new("TextLabel", frame)
+statusLabel.Size = UDim2.new(1, -20, 0, 25)
+statusLabel.Position = UDim2.new(0, 10, 0, 245)
 statusLabel.Font = Enum.Font.SourceSansItalic
-statusLabel.TextSize = 20
-statusLabel.Position = UDim2.new(0, 10, 0, 295)
-statusLabel.Size = UDim2.new(1, -20, 0, 30)
-statusLabel.BackgroundTransparency = 1
+statusLabel.TextSize = 18
+statusLabel.Text = ""
 statusLabel.TextColor3 = Color3.fromRGB(0, 170, 0)
+statusLabel.BackgroundTransparency = 1
 statusLabel.Visible = false
 
--- Attribution
-local credit = Instance.new("TextLabel", mainFrame)
-credit.Text = "👤 Made By KentNeedProfits"
-credit.Font = Enum.Font.SourceSans
-credit.TextSize = 14
-credit.Position = UDim2.new(0, 10, 1, -30)
-credit.Size = UDim2.new(1, -20, 0, 20)
-credit.BackgroundTransparency = 1
-credit.TextColor3 = Color3.fromRGB(100, 100, 100)
-
--- Script Logic
+-- 🧠 Logic
 local selectedPlayer = nil
 
-local function updatePlayerList()
-	playerList:ClearAllChildren()
-	for _, p in pairs(Players:GetPlayers()) do
+local function refreshPlayerList()
+	scroll:ClearAllChildren()
+	selectedPlayer = nil
+	playerListLabel.Text = "Select Player:"
+	
+	for _, p in ipairs(Players:GetPlayers()) do
 		if p ~= player then
 			local btn = Instance.new("TextButton")
 			btn.Size = UDim2.new(1, 0, 0, 30)
 			btn.Text = p.Name
-			btn.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+			btn.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
 			btn.TextColor3 = Color3.fromRGB(0, 0, 0)
 			btn.Font = Enum.Font.SourceSans
 			btn.TextSize = 16
-			btn.Parent = playerList
+			Instance.new("UICorner", btn)
+			btn.Parent = scroll
 
 			btn.MouseButton1Click:Connect(function()
 				selectedPlayer = p
-				selectLabel.Text = "Selected: " .. p.Name
+				playerListLabel.Text = "Selected: " .. p.Name
 			end)
 		end
 	end
-	playerList.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
+
+	scroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y)
 end
 
-updatePlayerList()
-Players.PlayerAdded:Connect(updatePlayerList)
-Players.PlayerRemoving:Connect(updatePlayerList)
+-- Initial Load + Refresh
+refreshPlayerList()
+refreshButton.MouseButton1Click:Connect(refreshPlayerList)
+Players.PlayerAdded:Connect(refreshPlayerList)
+Players.PlayerRemoving:Connect(refreshPlayerList)
 
+-- Freeze Trade Logic
 freezeButton.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
 		statusLabel.Text = "⚠️ No player selected!"
@@ -132,6 +145,7 @@ freezeButton.MouseButton1Click:Connect(function()
 	statusLabel.Visible = false
 	freezeButton.Active = false
 	freezeButton.Text = "Freezing..."
+	loadingFill.Size = UDim2.new(0, 0, 1, 0)
 
 	for i = 1, 10 do
 		local percent = i / 10
@@ -143,6 +157,5 @@ freezeButton.MouseButton1Click:Connect(function()
 	statusLabel.TextColor3 = Color3.fromRGB(0, 170, 0)
 	statusLabel.Visible = true
 	freezeButton.Text = "❄️ Freeze Trade"
-	loadingFill.Size = UDim2.new(0, 0, 1, 0)
 	freezeButton.Active = true
 end)
