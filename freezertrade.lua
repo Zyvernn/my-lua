@@ -1,7 +1,8 @@
--- Trade Freeze GUI Script
+-- Animated Trade Freeze GUI
 -- Author: YOUR_NAME
 
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
@@ -17,10 +18,9 @@ Frame.Position = UDim2.new(0.5, -125, 0.5, -75)
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Frame.BorderSizePixel = 0
 Frame.Active = true
-Frame.Draggable = true -- Frame is movable
+Frame.Draggable = true
 Frame.Parent = ScreenGui
 
--- Round the frame
 local UICorner = Instance.new("UICorner")
 UICorner.CornerRadius = UDim.new(0, 12)
 UICorner.Parent = Frame
@@ -63,24 +63,49 @@ local LoadingCorner = Instance.new("UICorner")
 LoadingCorner.CornerRadius = UDim.new(0, 6)
 LoadingCorner.Parent = LoadingBar
 
--- Animate loading bar
+-- Center Message
+local CenterMessage = Instance.new("TextLabel")
+CenterMessage.Size = UDim2.new(1, 0, 1, 0)
+CenterMessage.BackgroundTransparency = 1
+CenterMessage.TextColor3 = Color3.fromRGB(255, 255, 255)
+CenterMessage.TextScaled = true
+CenterMessage.Font = Enum.Font.GothamBold
+CenterMessage.Text = ""
+CenterMessage.Visible = false
+CenterMessage.Parent = Frame
+
+-- Function to animate loading
 local function StartLoading()
+    -- Hide button and show loading bar
     FreezeButton.Visible = false
     LoadingBar.Visible = true
-    LoadingBar.Size = UDim2.new(0, 0, 0, 10)
 
-    -- Animate for 10 seconds
-    for i = 1, 100 do
-        LoadingBar.Size = UDim2.new(i/100 * 0.8, 0, 0, 10) -- fills 80% width
-        task.wait(0.1) -- 0.1 sec * 100 = 10 seconds
-    end
+    -- Show center text
+    CenterMessage.Visible = true
+    CenterMessage.Text = "Freezing Trade..."
+    CenterMessage.TextTransparency = 1
 
-    -- After loading
+    -- Fade in text
+    TweenService:Create(CenterMessage, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+
+    -- Animate loading bar to fill 80% over 10 seconds
+    local Tween = TweenService:Create(
+        LoadingBar,
+        TweenInfo.new(10, Enum.EasingStyle.Linear),
+        {Size = UDim2.new(0.8, 0, 0, 10)}
+    )
+    Tween:Play()
+    Tween.Completed:Wait()
+
+    -- After loading, show Trade Frozen!
     LoadingBar.Visible = false
-    FreezeButton.Visible = true
-    FreezeButton.Text = "Trade Frozen!"
-    FreezeButton.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-    FreezeButton.AutoButtonColor = false -- disable hover effect
+    Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    CenterMessage.Text = "TRADE FROZEN!"
+    CenterMessage.TextColor3 = Color3.fromRGB(0, 255, 0)
+    
+    -- Animate text pop effect
+    CenterMessage.TextSize = 20
+    TweenService:Create(CenterMessage, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextSize = 40}):Play()
 end
 
 -- Button Click
