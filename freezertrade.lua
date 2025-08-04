@@ -1,171 +1,149 @@
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local userId = player.UserId
+local LocalPlayer = Players.LocalPlayer
 
--- Create ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FreezeTradeGui"
-screenGui.ResetOnSpawn = false
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.Parent = player:WaitForChild("PlayerGui")
+-- ScreenGui setup
+local gui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+gui.Name = "FreezeTradeUI"
+gui.ResetOnSpawn = false
 
 -- Main Frame
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 320, 0, 230)
-frame.Position = UDim2.new(0.5, -160, 0.5, -115)
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 340, 0, 270)
+frame.Position = UDim2.new(0.5, -170, 0.5, -135)
 frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 frame.BorderSizePixel = 0
 frame.AnchorPoint = Vector2.new(0.5, 0.5)
 frame.Active = true
 frame.Draggable = true
-frame.BackgroundTransparency = 1
-frame.ClipsDescendants = true
-frame.Parent = screenGui
 
 -- Rounded corners
-local corner = Instance.new("UICorner", frame)
-corner.CornerRadius = UDim.new(0, 20)
-
--- Fade in
-task.spawn(function()
-	for i = 1, 10 do
-		frame.BackgroundTransparency = 1 - (i / 10)
-		task.wait(0.03)
-	end
-end)
-
--- Avatar Image
-local avatar = Instance.new("ImageLabel")
-avatar.Size = UDim2.new(0, 60, 0, 60)
-avatar.Position = UDim2.new(0.05, 0, 0.05, 0)
-avatar.BackgroundTransparency = 1
-avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=420&height=420&format=png"
-avatar.Parent = frame
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 20)
 
 -- Title
-local title = Instance.new("TextLabel")
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 10)
 title.Text = "❄️ Freeze Trade"
 title.Font = Enum.Font.GothamBold
-title.TextColor3 = Color3.fromRGB(30, 30, 30)
+title.TextColor3 = Color3.fromRGB(40, 40, 40)
 title.TextScaled = true
 title.BackgroundTransparency = 1
-title.Position = UDim2.new(0.28, 0, 0.05, 0)
-title.Size = UDim2.new(0.65, 0, 0.15, 0)
-title.Parent = frame
+
+-- Dropdown player list
+local playerDropdown = Instance.new("TextButton", frame)
+playerDropdown.Size = UDim2.new(0.8, 0, 0, 35)
+playerDropdown.Position = UDim2.new(0.1, 0, 0.25, 0)
+playerDropdown.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+playerDropdown.TextColor3 = Color3.fromRGB(30, 30, 30)
+playerDropdown.Font = Enum.Font.Gotham
+playerDropdown.TextScaled = true
+playerDropdown.Text = "Select Target"
+Instance.new("UICorner", playerDropdown).CornerRadius = UDim.new(0, 8)
+
+-- Avatar display
+local avatarImage = Instance.new("ImageLabel", frame)
+avatarImage.Size = UDim2.new(0, 60, 0, 60)
+avatarImage.Position = UDim2.new(0.1, 0, 0.45, 0)
+avatarImage.BackgroundTransparency = 1
+avatarImage.Visible = false
 
 -- Freeze Button
-local button = Instance.new("TextButton")
-button.Text = "Freeze Trade"
-button.Font = Enum.Font.Gotham
-button.TextColor3 = Color3.fromRGB(255, 255, 255)
-button.TextScaled = true
-button.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
-button.Size = UDim2.new(0.8, 0, 0, 45)
-button.Position = UDim2.new(0.1, 0, 0.35, 0)
-button.BorderSizePixel = 0
-button.AutoButtonColor = true
-button.Parent = frame
+local freezeButton = Instance.new("TextButton", frame)
+freezeButton.Size = UDim2.new(0.8, 0, 0, 40)
+freezeButton.Position = UDim2.new(0.1, 0, 0.7, 0)
+freezeButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+freezeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+freezeButton.Font = Enum.Font.Gotham
+freezeButton.TextScaled = true
+freezeButton.Text = "Freeze Trade"
+Instance.new("UICorner", freezeButton).CornerRadius = UDim.new(0, 10)
 
-local btnCorner = Instance.new("UICorner", button)
-btnCorner.CornerRadius = UDim.new(0, 10)
-
--- Instruction
-local instructions = Instance.new("TextLabel")
-instructions.Text = "☑️ Freeze the trade.\n⏳ Wait for players to accept\n🕒 Stay 5 minutes in server."
-instructions.Font = Enum.Font.Gotham
-instructions.TextColor3 = Color3.fromRGB(50, 50, 50)
-instructions.TextScaled = true
-instructions.TextWrapped = true
-instructions.BackgroundTransparency = 1
-instructions.Position = UDim2.new(0.05, 0, 0.6, 0)
-instructions.Size = UDim2.new(0.9, 0, 0.3, 0)
-instructions.Parent = frame
-
--- Footer
-local footer = Instance.new("TextLabel")
-footer.Text = "🛠️ Made By YourNameHere"
-footer.Font = Enum.Font.GothamItalic
-footer.TextColor3 = Color3.fromRGB(120, 120, 120)
-footer.TextScaled = true
-footer.BackgroundTransparency = 1
-footer.Position = UDim2.new(0, 0, 0.92, 0)
-footer.Size = UDim2.new(1, 0, 0.08, 0)
-footer.Parent = frame
-
--- Popup Message
-local popup = Instance.new("TextLabel")
-popup.Size = UDim2.new(0, 200, 0, 50)
-popup.Position = UDim2.new(0.5, -100, 0.1, -60)
+-- Popup
+local popup = Instance.new("TextLabel", gui)
+popup.Size = UDim2.new(0, 220, 0, 50)
+popup.Position = UDim2.new(0.5, -110, 0.15, -20)
 popup.BackgroundColor3 = Color3.fromRGB(0, 180, 255)
 popup.TextColor3 = Color3.new(1, 1, 1)
-popup.Text = "❄️ Trade Frozen!"
-popup.TextScaled = true
+popup.Text = "❄️ Trade Frozen"
 popup.Font = Enum.Font.GothamBold
-popup.BackgroundTransparency = 1
+popup.TextScaled = true
 popup.Visible = false
-popup.Parent = screenGui
+popup.BackgroundTransparency = 1
+Instance.new("UICorner", popup).CornerRadius = UDim.new(0, 12)
 
-local popupCorner = Instance.new("UICorner", popup)
-popupCorner.CornerRadius = UDim.new(0, 12)
+-- Scroll list of players (popup list)
+local dropdownFrame = Instance.new("Frame", frame)
+dropdownFrame.Size = UDim2.new(0.8, 0, 0, 100)
+dropdownFrame.Position = UDim2.new(0.1, 0, 0.35, 0)
+dropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+dropdownFrame.BorderSizePixel = 0
+dropdownFrame.Visible = false
+Instance.new("UICorner", dropdownFrame).CornerRadius = UDim.new(0, 8)
 
--- Processing Text
-local processingLabel = Instance.new("TextLabel")
-processingLabel.Text = ""
-processingLabel.Font = Enum.Font.Gotham
-processingLabel.TextColor3 = Color3.fromRGB(90, 90, 90)
-processingLabel.TextScaled = true
-processingLabel.BackgroundTransparency = 1
-processingLabel.Position = UDim2.new(0, 0, 0.85, 0)
-processingLabel.Size = UDim2.new(1, 0, 0.1, 0)
-processingLabel.Visible = false
-processingLabel.Parent = frame
+local uiList = Instance.new("UIListLayout", dropdownFrame)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+uiList.Padding = UDim.new(0, 5)
 
--- Animation + Logic
-local frozen = false
-local processing = false
+-- Create list buttons
+local selectedPlayer = nil
 
-button.MouseButton1Click:Connect(function()
-	if frozen or processing then return end
+local function refreshDropdown()
+	dropdownFrame:ClearAllChildren()
+	uiList.Parent = dropdownFrame
 
-	processing = true
-	button.AutoButtonColor = false
-	button.Text = ""
-	button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-	processingLabel.Visible = true
+	for _, p in ipairs(Players:GetPlayers()) do
+		if p ~= LocalPlayer then
+			local option = Instance.new("TextButton", dropdownFrame)
+			option.Size = UDim2.new(1, 0, 0, 25)
+			option.BackgroundColor3 = Color3.fromRGB(240, 240, 240)
+			option.Text = p.DisplayName
+			option.TextScaled = true
+			option.TextColor3 = Color3.fromRGB(30, 30, 30)
+			option.Font = Enum.Font.Gotham
+			Instance.new("UICorner", option).CornerRadius = UDim.new(0, 6)
 
-	-- Animate "Processing..."
-	local running = true
-	task.spawn(function()
-		local dots = ""
-		while running do
-			dots = (dots == "...") and "" or dots .. "."
-			processingLabel.Text = "Processing" .. dots
-			task.wait(0.4)
+			option.MouseButton1Click:Connect(function()
+				selectedPlayer = p
+				playerDropdown.Text = "Target: " .. p.DisplayName
+				avatarImage.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. p.UserId .. "&width=420&height=420&format=png"
+				avatarImage.Visible = true
+				dropdownFrame.Visible = false
+			end)
 		end
-	end)
+	end
+end
 
-	-- Color pulse animation during "freezing"
-	local originalColor = Color3.fromRGB(100, 100, 100)
+-- Toggle dropdown
+playerDropdown.MouseButton1Click:Connect(function()
+	refreshDropdown()
+	dropdownFrame.Visible = not dropdownFrame.Visible
+end)
+
+-- Freeze logic
+local isFrozen = false
+freezeButton.MouseButton1Click:Connect(function()
+	if not selectedPlayer or isFrozen then return end
+
+	isFrozen = true
+	freezeButton.Text = "Freezing Trade…"
+	freezeButton.AutoButtonColor = false
+
+	-- Animation pulse
 	local pulse = true
 	task.spawn(function()
 		while pulse do
-			button.BackgroundColor3 = Color3.fromRGB(120, 180, 255)
+			freezeButton.BackgroundColor3 = Color3.fromRGB(0, 180, 255)
 			task.wait(0.3)
-			button.BackgroundColor3 = originalColor
+			freezeButton.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
 			task.wait(0.3)
 		end
 	end)
 
-	-- Finish freeze after delay
+	-- Delay, then show frozen popup
 	task.delay(2.2, function()
-		running = false
 		pulse = false
-		processingLabel.Visible = false
-		button.Text = "Frozen ❄️"
-		button.BackgroundColor3 = Color3.fromRGB(0, 180, 255)
-		button.AutoButtonColor = true
-		frozen = true
-		processing = false
+		freezeButton.Text = "Frozen ❄️"
+		freezeButton.BackgroundColor3 = Color3.fromRGB(0, 180, 255)
 
 		-- Show popup
 		popup.Visible = true
